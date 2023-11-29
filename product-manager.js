@@ -1,6 +1,8 @@
+import fs from "fs";
+
 class ProductManager {
-  constructor() {
-    this.products = [];
+  constructor(path) {
+    this.path = path;
   }
 
   addProduct(product) {
@@ -21,19 +23,52 @@ class ProductManager {
 
     // Agregar el producto al arreglo
     this.products.push(product);
+
+    // Guardar los productos en el archivo
+    fs.writeFileSync(this.path, JSON.stringify(this.products), { mode: "w" });
   }
 
   getProducts() {
-    return this.products;
+    // Leer los productos del archivo
+    const products = JSON.parse(fs.readFileSync(this.path));
+
+    // Devolver los productos
+    return products;
   }
 
   getProductById(id) {
-    const product = this.products.find((p) => p.id === id);
+    // Leer los productos del archivo
+    const products = JSON.parse(fs.readFileSync(this.path));
 
-    if (!product) {
-      throw new Error("No se encontró el producto con el id", id);
-    }
+    // Buscar el producto con el id especificado
+    const product = products.find((p) => p.id === id);
 
+    // Devolver el producto
     return product;
+  }
+
+  updateProduct(id, field, value) {
+    // Leer los productos del archivo
+    const products = JSON.parse(fs.readFileSync(this.path));
+
+    // Buscar el producto con el id especificado
+    const product = products.find((p) => p.id === id);
+
+    // Actualizar el campo especificado
+    product[field] = value;
+
+    // Guardar los productos en el archivo
+    fs.writeFileSync(this.path, JSON.stringify(products), { mode: "w" });
+  }
+
+  deleteProduct(id) {
+    // Leer los productos del archivo
+    const products = JSON.parse(fs.readFileSync(this.path));
+
+    // Eliminar el producto
+    products = products.filter((p) => p.id !== id);
+
+    // Guardar los productos en el archivo
+    fs.writeFileSync(this.path, JSON.stringify(products), { mode: "w" });
   }
 }

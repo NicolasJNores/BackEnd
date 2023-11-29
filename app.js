@@ -1,12 +1,14 @@
 import ProductManager from "./product-manager.js";
 
-const productManager = new ProductManager();
+const productManager = new ProductManager("./products.json");
 
 // Obtener los productos
 const products = productManager.getProducts();
 
 // Validar que el arreglo esté vacío
-console.log("El arreglo de productos está vacío:", products.length === 0);
+if (products.length !== 0) {
+  throw new Error("El arreglo de productos no debe estar vacío");
+}
 
 // Agregar un producto
 productManager.addProduct({
@@ -22,7 +24,9 @@ productManager.addProduct({
 products = productManager.getProducts();
 
 // Validar que el producto esté agregado
-console.log("El producto se agregó correctamente:", products.find((p) => p.code === "MACBOOK-PRO") !== undefined);
+if (products.find((p) => p.code === "MACBOOK-PRO") === undefined) {
+  throw new Error("El producto no se agregó correctamente");
+}
 
 // Agregar el mismo producto nuevamente
 productManager.addProduct({
@@ -45,14 +49,18 @@ try {
     stock: 5,
   });
 } catch (error) {
-  console.log("Se arrojó el error esperado:", error.message === "El código del producto ya existe");
+  if (error.message !== "El código del producto ya existe") {
+    throw new Error("El error no es el esperado");
+  }
 }
 
 // Obtener un producto por id
 const product = productManager.getProductById(1);
 
 // Validar que el producto se encuentre
-console.log("El producto se encontró:", product !== undefined);
+if (product === undefined) {
+  throw new Error("El producto no se encontró");
+}
 
 // Imprimir los productos
 console.log(products);
